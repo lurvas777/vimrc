@@ -1,0 +1,70 @@
+" Essential stuff
+"color desert "default skin if molokai is not installed
+"set expandtab                               " Expands tabs to spaces. Real tab: <ctrl+v><tab>
+set tabstop=4                               " How many spaces to expand a tab, or length of normal tab if command above is commented out
+set shiftwidth=4                            " How many spaces to indent
+filetype indent on							" Use /vim/indent to know how to indent based on type
+set indentexpr=GetMyIndent()								" Smart indention based on type
+" When indentexpr fails, fall back to smartindent and cindent. If all fails, use autoindent
+set smartindent								" Like autoindent but recognize C syntax
+set cindent									" More clever indentation than auto and smart.
+set autoindent								" Dumb, copies indentation from previous line. Doesn't interfere with other indentation settings
+color molokai "third party colorscheme
+set t_Co=256  "set colors to support 256 colors, which is nicer but experimental
+
+"Parenthesis and stuff: autocomplete, overwrite, and delay. Also with nice indentation
+"because of the indentation above
+inoremap {      {}<Left>
+inoremap {<CR>  {<CR>}<Esc>O
+inoremap {{     {
+inoremap {}     {}
+inoremap <expr> }  strpart(getline('.'), col('.')-1, 1) == "}" ? "\<Right>" : "}"
+
+inoremap        (  ()<Left>
+inoremap <expr> )  strpart(getline('.'), col('.')-1, 1) == ")" ? "\<Right>" : ")"
+
+inoremap        [  []<Left>
+inoremap <expr> ]  strpart(getline('.'), col('.')-1, 1) == "]" ? "\<Right>" : "]"
+
+inoremap <expr> ' strpart(getline('.'), col('.')-1, 1) == "\'" ? "\<Right>" : "\'\'\<Left>"
+inoremap <expr> " strpart(getline('.'), col('.')-1, 1) == "\"" ? "\<Right>" : "\"\"\<Left>"
+
+"Better keys for splitting, instead of doing two seperate key commands
+nnoremap <C-J> <C-W><C-J>                   
+nnoremap <C-K> <C-W><C-K>
+nnoremap <C-L> <C-W><C-L>
+nnoremap <C-H> <C-W><C-H>
+set splitbelow                              " Intuitive splits
+set splitright                              " Intuitive splits
+
+"UI
+set wildmenu                                " Show menu with tab when doing command, ex ':sp <tab>'
+set pastetoggle=<F8>                        " Paste without spaces/tabs at begininng of line
+set hlsearch                                " Highlight matches. Use ':noh' to unset it
+nmap <F5> :set hls! <cr>
+" switch higlight no matter the previous state
+nnoremap / :set hlsearch<cr>/
+" hit '/' highlights then enter search mode
+
+"inserts a list number that increses in insertmode
+let counter = 0								" List counter, global
+inoremap <expr> <F2> ListItem()
+inoremap <expr> <F3> ListInc()
+inoremap <expr> <F4> ListReset()
+
+func ListItem()
+    let g:counter += 1
+    return g:counter . '. '
+endfunc
+
+func ListInc()
+    let g:counter +=1
+    echo "Counter: " . g:counter
+    return ''
+endfunc
+
+func ListReset()
+    let g:counter = 0
+    echo "Counter: " . g:counter
+    return ''
+endfunc
